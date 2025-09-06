@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Todo } from '../../types/Todo';
-import { getUserById } from '../../services/userService';
-
-import usersFromServer from '../../api/users';
+import { User } from '../../types/User';
 
 interface Props {
-  onAdd: (todo: Todo) => void;
+  users: User[];
+  onAdd: (todo: { title: string; userId: number }) => void;
 }
 
-export const TodoForm: React.FC<Props> = ({ onAdd }) => {
+export const TodoForm: React.FC<Props> = ({ users, onAdd }) => {
   const [title, setTitle] = useState('');
   const [hasTitleError, setHasTitleError] = useState(false);
 
@@ -43,15 +41,7 @@ export const TodoForm: React.FC<Props> = ({ onAdd }) => {
       return;
     }
 
-    const newTodo: Todo = {
-      id: 0,
-      title: title.trim(),
-      completed: false,
-      userId: userId,
-      user: getUserById(userId),
-    };
-
-    onAdd(newTodo);
+    onAdd({ title: title.trim(), userId });
 
     reset();
   };
@@ -82,7 +72,7 @@ export const TodoForm: React.FC<Props> = ({ onAdd }) => {
           <option value="0" disabled>
             Choose a user
           </option>
-          {usersFromServer.map(user => (
+          {users.map(user => (
             <option value={user.id} key={user.id}>
               {user.name}
             </option>
